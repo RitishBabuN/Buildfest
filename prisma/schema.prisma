@@ -1,0 +1,41 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Meeting {
+  id          String       @id @default(uuid())
+  title       String
+  transcript  String
+  summary     String?
+  createdAt   DateTime     @default(now())
+  actionItems ActionItem[]
+}
+
+model ActionItem {
+  id             String   @id @default(uuid())
+  meetingId      String?
+  meeting        Meeting? @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  title          String
+  description    String
+  assigneeName   String
+  assigneeAvatar String
+  assigneeRole   String
+  deadline       String
+  status         String   @default("Pending")
+  riskLevel      String   @default("Medium")
+  aiConfidence   Int      @default(95)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  event     String
+  timestamp DateTime @default(now())
+  details   String
+}
